@@ -72,6 +72,49 @@ Each project folder contains:
 
 ---
 
+# Project List and Learning Scope
+
+Each project builds upon previous knowledge and introduces new RTOS concepts.
+
+| Project | Concept Demonstrated |
+|--------|----------------------|
+| 001Tasks | Task creation and scheduler behavior |
+| 002LED_Tasks | Task delay mechanisms and deterministic timing |
+| 005LED_Task_Notify | Task Notification and event-driven execution |
+| 006ButtonISR | Interrupt-to-task synchronization |
+| 007TSwap_Task_Priority | Binary semaphore-based task switching |
+| 008Queues_n_timers | Queue-based architecture and software timers |
+| 009BinarySemaphore | Binary semaphore synchronization |
+| 010CountingSemaphore | Counting semaphore event handling |
+| 011BinarySemaphore_Mutex | Mutual exclusion using binary semaphore |
+| 012Mutex_API | Mutex and priority inheritance |
+
+These projects demonstrate progressively advanced RTOS concepts.
+
+---
+
+# Personal Technical Notes (mynotes/)
+
+Directory:
+
+```
+mynotes/
+```
+
+Contains personal technical documentation created during the learning process.
+
+Includes:
+
+- Detailed explanation of each project
+- FreeRTOS API descriptions
+- Synchronization mechanisms
+- Scheduler behavior analysis
+- Debugging techniques
+
+This serves as a personal embedded systems knowledge base.
+
+---
+
 # FreeRTOS Version Migration (v10.4 → v11)
 
 Initially, all projects were developed using:
@@ -114,26 +157,6 @@ Instead of creating separate projects, the delay method was changed using commen
 
 This allowed controlled comparison of delay mechanisms without introducing unrelated variables.
 
----
-
-# Project List and Learning Scope
-
-Each project builds upon previous knowledge and introduces new RTOS concepts.
-
-| Project | Concept Demonstrated |
-|--------|----------------------|
-| 001Tasks | Task creation and scheduler behavior |
-| 002LED_Tasks | Task delay mechanisms and deterministic timing |
-| 005LED_Task_Notify | Task Notification and event-driven execution |
-| 006ButtonISR | Interrupt-to-task synchronization |
-| 007TSwap_Task_Priority | Binary semaphore-based task switching |
-| 008Queues_n_timers | Queue-based architecture and software timers |
-| 009BinarySemaphore | Binary semaphore synchronization |
-| 010CountingSemaphore | Counting semaphore event handling |
-| 011BinarySemaphore_Mutex | Mutual exclusion using binary semaphore |
-| 012Mutex_API | Mutex and priority inheritance |
-
-These projects demonstrate progressively advanced RTOS concepts.
 
 ---
 
@@ -205,28 +228,6 @@ These recordings demonstrate:
 - Real-time kernel activity
 
 These traces were used to analyze and verify real-time behavior.
-
----
-
-# Personal Technical Notes (mynotes/)
-
-Directory:
-
-```
-mynotes/
-```
-
-Contains personal technical documentation created during the learning process.
-
-Includes:
-
-- Detailed explanation of each project
-- FreeRTOS API descriptions
-- Synchronization mechanisms
-- Scheduler behavior analysis
-- Debugging techniques
-
-This serves as a personal embedded systems knowledge base.
 
 ---
 
@@ -304,7 +305,7 @@ This repository serves as:
 
 # Author
 
-Embedded Systems Developer  
+Yunus Emre SELEN
 Focus Areas:
 
 - Embedded Software Development
