@@ -1,248 +1,276 @@
-# 002LED_Tasks – Real-Time LED Control with Deterministic FreeRTOS Scheduling
+<h1 align="center">002LED_Tasks</h1>
+<h3 align="center">Real-Time LED Control with Deterministic FreeRTOS Scheduling</h3>
 
 ---
 
-## Overview
+# Overview
 
-This project demonstrates **deterministic periodic task execution**, **preemptive multitasking**, and **real-time scheduling behavior** using **FreeRTOS** on the **STM32 NUCLEO-F401RE (ARM Cortex‑M4)** platform.
+This project demonstrates **deterministic periodic task execution**, **preemptive multitasking**, and **real-time scheduling behavior** using **FreeRTOS** on the **STM32 NUCLEO-F401RE (ARM Cortex-M4)** platform.
 
-Three independent RTOS tasks are created, each responsible for controlling a different LED with a unique execution period. The project highlights the **correct professional approach for implementing periodic real-time tasks**, and clearly demonstrates the differences between:
+Three independent RTOS tasks are created, each responsible for controlling a different LED with a unique execution period. This project highlights the **correct professional approach for implementing periodic real-time tasks**, and clearly demonstrates the behavioral differences between blocking delays, non-deterministic RTOS delays, and deterministic scheduling.
 
-* ❌ Blocking delay (`HAL_Delay`)
-* ⚠️ Non‑deterministic RTOS delay (`vTaskDelay`)
-* ✅ Deterministic periodic delay (`vTaskDelayUntil`)
+This implementation reflects real-world RTOS design patterns used in:
 
-This implementation reflects real-world RTOS design patterns used in **embedded firmware, industrial control systems, robotics, and automotive ECUs**.
-
----
-
-## Hardware Platform
-
-**Development Board:** STM32 NUCLEO‑F401RE
-**Microcontroller:** STM32F401RET6 – ARM Cortex‑M4 (84 MHz)
-**RTOS Kernel:** FreeRTOS
-**Development Environment:** STM32CubeIDE
-**Debug Interface:** SEGGER SystemView via UART/RTT
+- Embedded firmware systems  
+- Industrial automation and control systems  
+- Robotics applications  
+- Automotive Electronic Control Units (ECUs)  
 
 ---
 
-## Task Architecture
+# Hardware Platform
 
-Three independent FreeRTOS tasks are created using `xTaskCreate()`:
-
-| Task Name       | Hardware Resource | Execution Period | Function             |
-| --------------- | ----------------- | ---------------- | -------------------- |
-| Green LED Task  | GPIO PC0          | 800 ms           | Periodic LED control |
-| Orange LED Task | GPIO PC1          | 400 ms           | Periodic LED control |
-| Red LED Task    | GPIO PC2          | 200 ms           | Periodic LED control |
-
-Each task runs as an independent execution entity with:
-
-* Its own stack
-* Its own execution context
-* Equal priority level
-* Independent scheduling lifecycle
-
-This demonstrates **true RTOS‑based multitasking**.
+| Component | Description |
+|---------|-------------|
+| Development Board | STM32 NUCLEO-F401RE |
+| Microcontroller | STM32F401RET6 — ARM Cortex-M4 @ 84 MHz |
+| RTOS Kernel | FreeRTOS |
+| Development Environment | STM32CubeIDE |
+| Debug Interface | SEGGER SystemView via UART / RTT |
 
 ---
 
-## Deterministic Scheduling using vTaskDelayUntil()
+# Task Architecture
 
-This project uses the **correct and professional RTOS timing mechanism**:
+Three independent FreeRTOS tasks are created using:
 
+```c
+xTaskCreate()
 ```
+
+Each task controls a dedicated LED with a fixed periodic execution interval.
+
+| Task Name | GPIO Pin | Execution Period | Function |
+|----------|-----------|------------------|----------|
+| Green LED Task | PC0 | 800 ms | Periodic LED control |
+| Orange LED Task | PC1 | 400 ms | Periodic LED control |
+| Red LED Task | PC2 | 200 ms | Periodic LED control |
+
+Each task operates as an independent execution unit with:
+
+- Independent stack memory  
+- Dedicated execution context  
+- Equal priority level  
+- Independent scheduling lifecycle  
+
+This demonstrates true **preemptive multitasking using an RTOS scheduler**.
+
+---
+
+# Deterministic Scheduling using vTaskDelayUntil()
+
+This project uses the **industry-standard deterministic periodic delay mechanism**:
+
+```c
 vTaskDelayUntil(&last_wakeup_time, pdMS_TO_TICKS(period));
 ```
 
-Each task initializes its reference time using:
+Each task initializes its reference wakeup time using:
 
-```
+```c
 TickType_t last_wakeup_time = xTaskGetTickCount();
 ```
 
-This ensures that each task executes at a **precisely defined periodic interval**, independent of execution overhead.
+This guarantees:
 
-Unlike traditional delay mechanisms, this approach guarantees:
+- Deterministic periodic execution  
+- Precise timing intervals  
+- Zero cumulative timing drift  
+- Stable real-time system behavior  
 
-* Deterministic execution
-* No timing drift
-* Precise periodic scheduling
-* Real-time system stability
-
-This is the **industry‑standard method** for periodic task implementation.
+This is the **recommended professional method for periodic task implementation in real-time embedded systems**.
 
 ---
 
-## Comparison of Delay Mechanisms
+# Comparison of Delay Mechanisms
 
-### HAL_Delay() — Not RTOS Safe
+## HAL_Delay() — Blocking and Not RTOS Safe
 
-```
+```c
 HAL_Delay(200);
 ```
 
-**Problems:**
+Problems:
 
-* Blocks the CPU
-* Prevents scheduler operation
-* Breaks multitasking
-* Not suitable for RTOS systems
+- Blocks the CPU completely  
+- Prevents scheduler execution  
+- Breaks multitasking behavior  
+- Not suitable for RTOS environments  
 
 ---
 
-### vTaskDelay() — RTOS Safe but Non‑Deterministic
+## vTaskDelay() — RTOS Safe but Non-Deterministic
 
-```
+```c
 vTaskDelay(pdMS_TO_TICKS(200));
 ```
 
-**Advantages:**
+Advantages:
 
-* Allows scheduler operation
-* Non‑blocking
+- Non-blocking delay  
+- Allows scheduler to execute other tasks  
 
-**Disadvantage:**
+Disadvantage:
 
-* Execution period includes task runtime
-* Causes cumulative timing drift
+- Execution period includes task runtime  
+- Causes cumulative timing drift  
+- Not suitable for precise periodic execution  
 
 ---
 
-### vTaskDelayUntil() — Deterministic and Correct
+## vTaskDelayUntil() — Deterministic and Professional Solution
 
-```
+```c
 vTaskDelayUntil(&last_wakeup_time, pdMS_TO_TICKS(200));
 ```
 
-**Advantages:**
+Advantages:
 
-* Precise periodic execution
-* No drift
-* Deterministic timing
-* Professional RTOS behavior
+- Deterministic periodic execution  
+- No timing drift  
+- Precise execution intervals  
+- Real-time system stability  
 
-This is the **recommended approach for real‑time embedded systems**.
+This is the **industry-standard solution for periodic task scheduling in RTOS-based embedded firmware**.
 
 ---
 
-## FreeRTOS Scheduler Behavior
+# FreeRTOS Scheduler Behavior
 
 All tasks are created with equal priority:
 
-```
+```c
 Priority = 2
 ```
 
-FreeRTOS scheduler performs:
+The FreeRTOS scheduler performs:
 
-* Preemptive scheduling
-* Automatic context switching
-* Efficient CPU utilization
-* Task state management (Running, Ready, Blocked)
+- Preemptive scheduling  
+- Automatic context switching  
+- Efficient CPU time sharing  
+- Task state management (Running, Ready, Blocked)
 
-When tasks call `vTaskDelayUntil()`, they enter the **Blocked state**, allowing the scheduler to execute other ready tasks.
+When tasks call:
 
-This ensures efficient multitasking.
+```c
+vTaskDelayUntil()
+```
+
+they enter the **Blocked state**, allowing the scheduler to execute other ready tasks efficiently.
+
+This ensures optimal CPU utilization and true multitasking behavior.
 
 ---
 
-## Real-Time Debugging using SEGGER SystemView
+# Real-Time Debugging using SEGGER SystemView
 
-SEGGER SystemView integration enables:
+SEGGER SystemView integration enables real-time observation of RTOS behavior, including:
 
-* Real‑time task monitoring
-* Scheduler activity visualization
-* Context switch tracking
-* Execution timing analysis
-* CPU usage observation
+- Task execution monitoring  
+- Context switch visualization  
+- Scheduler activity tracking  
+- Execution timing analysis  
+- CPU usage observation  
 
 Debug messages are transmitted using:
 
-```
-SEGGER_SYSVIEW_PrintfTarget("Toggling LED");
+```c
+SEGGER_SYSVIEW_PrintfTarget("LED toggled");
 ```
 
-This provides deep visibility into RTOS behavior.
+This provides deep visibility into system runtime behavior.
 
 ---
 
-## Cortex‑M DWT Cycle Counter Integration
+# Cortex-M DWT Cycle Counter Integration
 
-The Cortex‑M Data Watchpoint and Trace unit is enabled:
+The Cortex-M Data Watchpoint and Trace (DWT) unit is enabled using:
 
-```
+```c
 #define DWT_CTRL (*(volatile uint32_t*)0xE0001000)
-DWT_CTRL |= (1<<0);
+DWT_CTRL |= (1 << 0);
 ```
 
 This enables:
 
-* High‑precision timing
-* Accurate RTOS event tracing
-* Professional‑level real‑time debugging
+- High-precision timing measurement  
+- Accurate event timing analysis  
+- Professional real-time debugging capability  
 
 ---
 
-## FreeRTOS APIs Used
+# FreeRTOS APIs Used
 
-**Task Management**
+## Task Management
 
-* xTaskCreate()
-* vTaskStartScheduler()
+- xTaskCreate()
+- vTaskStartScheduler()
 
-**Timing Management**
+## Timing Management
 
-* vTaskDelayUntil()
-* xTaskGetTickCount()
-* pdMS_TO_TICKS()
+- vTaskDelayUntil()
+- xTaskGetTickCount()
+- pdMS_TO_TICKS()
 
-**Debug and Monitoring**
+## Debug and Monitoring
 
-* SEGGER_SYSVIEW_Conf()
-* SEGGER_SYSVIEW_PrintfTarget()
-* SEGGER_UART_init()
-
----
-
-## System Behavior Summary
-
-After scheduler startup:
-
-* All tasks execute independently
-* Each LED toggles at its precise period
-* Scheduler manages execution automatically
-* CPU utilization is optimized
-* System operates deterministically
-
-This demonstrates **professional real‑time firmware design using FreeRTOS**.
+- SEGGER_SYSVIEW_Conf()
+- SEGGER_SYSVIEW_PrintfTarget()
+- SEGGER_UART_init()
 
 ---
 
-## Key Learning Outcomes
+# System Behavior Summary
+
+After scheduler initialization:
+
+- All tasks execute independently  
+- Each LED toggles at its precise defined interval  
+- Scheduler automatically manages task execution  
+- CPU utilization is optimized  
+- System operates deterministically  
+
+This demonstrates correct and professional **RTOS-based firmware design**.
+
+---
+
+# Key Learning Outcomes
 
 This project demonstrates practical understanding of:
 
-* RTOS‑based multitasking
-* Deterministic task scheduling
-* Periodic task implementation
-* Real‑time system timing control
-* Scheduler‑driven execution
-* Embedded RTOS debugging techniques
+- RTOS-based multitasking  
+- Deterministic task scheduling  
+- Periodic task implementation  
+- Real-time system timing control  
+- Scheduler-driven execution model  
+- Embedded RTOS debugging techniques  
 
 ---
 
-## Conclusion
+# Conclusion
 
-This project demonstrates the correct and professional implementation of periodic tasks using FreeRTOS.
+This project demonstrates the correct and professional implementation of periodic real-time tasks using FreeRTOS.
 
-Using **vTaskDelayUntil() ensures deterministic, stable, and predictable real‑time system behavior**, which is essential for professional embedded firmware development.
+Using:
+
+```c
+vTaskDelayUntil()
+```
+
+ensures deterministic, predictable, and stable real-time system behavior, which is essential for professional embedded firmware development.
 
 ---
 
-**Platform:** STM32 NUCLEO‑F401RE
-**RTOS:** FreeRTOS
-**Debug Tool:** SEGGER SystemView
-**Language:** Embedded C
+# Project Information
+
+| Parameter | Value |
+|---------|--------|
+| Platform | STM32 NUCLEO-F401RE |
+| Microcontroller | STM32F401RET6 |
+| Architecture | ARM Cortex-M4 |
+| RTOS | FreeRTOS |
+| Debug Tool | SEGGER SystemView |
+| Programming Language | Embedded C |
+| Development Environment | STM32CubeIDE |
 
 ---
